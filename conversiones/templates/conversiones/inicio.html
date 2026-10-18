@@ -1,0 +1,500 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Analizador de Representación de Datos</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #e8efff, #f5eaff);
+            margin: 0;
+            padding: 30px 15px;
+            color: #29334a;
+        }
+
+        .contenedor {
+            max-width: 950px;
+            margin: auto;
+        }
+
+        .encabezado {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .encabezado h1 {
+            color: #343078;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .encabezado p {
+            color: #667085;
+            font-size: 15px;
+        }
+
+        .tarjeta {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(50, 40, 100, 0.09);
+        }
+
+        h2 {
+            color: #5145a0;
+            font-size: 22px;
+            margin-top: 0;
+        }
+
+        h3 {
+            color: #343078;
+            margin-top: 25px;
+        }
+
+        .descripcion {
+            color: #667085;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin: 18px 0 8px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #cfd5e3;
+            border-radius: 9px;
+            font-size: 15px;
+            background: #fafbff;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #7161d1;
+            box-shadow: 0 0 0 3px rgba(113, 97, 209, 0.12);
+        }
+
+        button {
+            width: 100%;
+            background: linear-gradient(90deg, #6254bd, #8171d9);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background: linear-gradient(90deg, #5143aa, #7060c7);
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+            margin-top: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: #6254bd;
+            color: white;
+            padding: 13px;
+            text-align: left;
+        }
+
+        td {
+            padding: 13px;
+            border-bottom: 1px solid #e6e8ef;
+            overflow-wrap: anywhere;
+        }
+
+        tr:nth-child(even) {
+            background: #f7f6ff;
+        }
+
+        .resultado {
+            background: #f8f7ff;
+            border: 1px solid #e0dcff;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .error {
+            background: #fff0f0;
+            color: #b42318;
+            border: 1px solid #ffc9c9;
+            border-radius: 8px;
+            padding: 13px;
+            margin-top: 15px;
+        }
+
+        .informacion {
+            background: #eef3ff;
+            border-left: 4px solid #7161d1;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .codigo {
+            font-family: Consolas, monospace;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .pie {
+            text-align: center;
+            color: #667085;
+            font-size: 13px;
+            padding: 15px;
+        }
+
+        @media (max-width: 600px) {
+            .tarjeta {
+                padding: 18px;
+            }
+
+            .encabezado h1 {
+                font-size: 24px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="contenedor">
+
+    <!-- ENCABEZADO -->
+
+    <div class="encabezado">
+        <h1>Analizador de Representación de Datos</h1>
+
+        <p>
+            Conversión de sistemas numéricos,
+            análisis de bits, bytes y codificación UTF-8.
+        </p>
+    </div>
+
+
+    <!-- FORMULARIO DE CONVERSIONES -->
+
+    <div class="tarjeta">
+
+        <h2>Conversión de Sistemas Numéricos</h2>
+
+        <p class="descripcion">
+            Ingrese un número y seleccione su base de origen.
+            El sistema realizará las conversiones a decimal,
+            binario, octal y hexadecimal.
+        </p>
+
+        <form method="POST" novalidate>
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="accion"
+                   value="convertir">
+
+            <label for="numero">Número a convertir</label>
+
+            <input
+                type="text"
+                id="numero"
+                name="numero"
+                placeholder="Ejemplo: 255"
+                autocomplete="off"
+            >
+
+            <label for="base">Base de origen</label>
+
+            <select id="base" name="base">
+
+                <option value="2">
+                    Base 2 - Binario
+                </option>
+
+                <option value="8">
+                    Base 8 - Octal
+                </option>
+
+                <option value="10" selected>
+                    Base 10 - Decimal
+                </option>
+
+                <option value="16">
+                    Base 16 - Hexadecimal
+                </option>
+
+            </select>
+
+            <button type="submit">
+                Convertir número
+            </button>
+
+        </form>
+
+
+        <!-- MENSAJE DE ERROR -->
+
+        {% if error %}
+
+            <div class="error">
+                {{ error }}
+            </div>
+
+        {% endif %}
+
+
+        <!-- RESULTADOS DE CONVERSION -->
+
+        {% if resultado %}
+
+        <div class="resultado">
+
+            <h3>Resultados de la conversión</h3>
+
+            <div class="tabla-contenedor">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Representación</th>
+                            <th>Resultado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr>
+                            <td>Decimal</td>
+                            <td>{{ resultado.decimal }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Binario completo</td>
+                            <td class="codigo">
+                                {{ resultado.binario }}
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>Octal</td>
+                            <td>{{ resultado.octal }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Hexadecimal</td>
+                            <td>{{ resultado.hexadecimal }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Bits significativos</td>
+                            <td>{{ resultado.bits }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Bytes necesarios</td>
+                            <td>{{ resultado.bytes }}</td>
+                        </tr>
+
+                        <tr>
+                            <td>Bits completos</td>
+                            <td>{{ resultado.bits_completos }}</td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="informacion">
+
+                <strong>Información:</strong>
+
+                Los bits significativos representan la cantidad
+                mínima de bits necesarios para expresar el número.
+
+                Los bytes indican cuánto espacio necesita el
+                número, considerando que cada byte contiene 8 bits.
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- FORMULARIO DE TEXTO UTF-8 -->
+
+    <div class="tarjeta">
+
+        <h2>Análisis de Caracteres y UTF-8</h2>
+
+        <p class="descripcion">
+            Escriba un texto de hasta 20 caracteres.
+            El sistema mostrará el código decimal,
+            el punto de código Unicode, el valor
+            hexadecimal y los bytes UTF-8
+            correspondientes a cada carácter.
+        </p>
+
+        <form method="POST" novalidate>
+
+            {% csrf_token %}
+
+            <input type="hidden"
+                   name="accion"
+                   value="texto">
+
+            <label for="texto">Texto a analizar</label>
+
+            <input
+                type="text"
+                id="texto"
+                name="texto"
+                maxlength="20"
+                placeholder="Ejemplo: Año"
+                autocomplete="off"
+            >
+
+            <button type="submit">
+                Analizar texto
+            </button>
+
+        </form>
+
+
+        <!-- ERRORES DEL TEXTO -->
+
+        {% if error_texto %}
+
+            <div class="error">
+                {{ error_texto }}
+            </div>
+
+        {% endif %}
+
+
+        <!-- RESULTADOS UTF-8 -->
+
+        {% if texto_resultado %}
+
+        <div class="resultado">
+
+            <h3>Resultados del análisis UTF-8</h3>
+
+            <div class="tabla-contenedor">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+                            <th>Carácter</th>
+                            <th>Código decimal</th>
+                            <th>Unicode</th>
+                            <th>Hexadecimal</th>
+                            <th>Bytes UTF-8</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        {% for item in texto_resultado %}
+
+                        <tr>
+
+                            <td>{{ item.caracter }}</td>
+
+                            <td>{{ item.decimal }}</td>
+
+                            <td>{{ item.unicode }}</td>
+
+                            <td>{{ item.hexadecimal }}</td>
+
+                            <td class="codigo">
+                                {{ item.utf8 }}
+                            </td>
+
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+            <div class="informacion">
+
+                <strong>¿Qué es UTF-8?</strong>
+
+                UTF-8 es un sistema de codificación
+                que permite representar letras,
+                números, símbolos y caracteres
+                especiales mediante uno o varios bytes.
+
+                Por ejemplo, la letra ñ se representa
+                mediante los bytes C3 B1.
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- PIE DE PAGINA -->
+
+    <div class="pie">
+
+        Analizador de Representación de Datos
+        | Python 3.12 + Django
+
+    </div>
+
+</div>
+
+</body>
+</html>
